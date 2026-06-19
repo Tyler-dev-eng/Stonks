@@ -1,6 +1,5 @@
-package com.tylerdev.stonks.ui.theme
+package com.tylerdev.stonks.presentation.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

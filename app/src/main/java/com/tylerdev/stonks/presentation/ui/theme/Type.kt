@@ -1,4 +1,4 @@
-package com.tylerdev.stonks.ui.theme
+package com.tylerdev.stonks.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
