@@ -8,9 +8,10 @@ plugins {
     alias(libs.plugins.ktlint)
 }
 
-val localProperties = Properties().apply {
-    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
-}
+val localProperties =
+    Properties().apply {
+        rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+    }
 
 android {
     namespace = "com.tylerdev.stonks"
@@ -29,7 +30,7 @@ android {
         buildConfigField(
             "String",
             "ALPHA_VANTAGE_API_KEY",
-            "\"${localProperties.getProperty("ALPHA_VANTAGE_API_KEY", "")}\""
+            "\"${localProperties.getProperty("ALPHA_VANTAGE_API_KEY", "")}\"",
         )
     }
 
