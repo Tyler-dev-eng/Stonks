@@ -8,13 +8,13 @@ import com.tylerdev.stonks.domain.model.CompanyListingDomainModel
  *
  * @return Domain model with listing fields copied from the stored entity.
  */
-fun CompanyListingEntity.toCompanyListingDomainModel(): CompanyListingDomainModel {
-    return CompanyListingDomainModel(
+fun CompanyListingEntity.toCompanyListingDomainModel() =
+    CompanyListingDomainModel(
         name = name,
         symbol = symbol,
         exchange = exchange
     )
-}
+
 
 /**
  * Maps a [CompanyListingDomainModel] into a [CompanyListingEntity] for local persistence.
@@ -22,10 +22,10 @@ fun CompanyListingEntity.toCompanyListingDomainModel(): CompanyListingDomainMode
  * @return Entity ready for insertion or update in Room; [CompanyListingEntity.id] is left null
  *   so the database can assign a primary key on insert.
  */
-fun CompanyListingDomainModel.toCompanyListingEntity(): CompanyListingEntity {
-    return CompanyListingEntity(
+fun CompanyListingDomainModel.toCompanyListingEntity() =
+    CompanyListingEntity(
         name = name,
         symbol = symbol,
         exchange = exchange
     )
-}
+
