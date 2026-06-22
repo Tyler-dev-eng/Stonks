@@ -15,3 +15,17 @@ fun CompanyListingEntity.toCompanyListingDomainModel(): CompanyListingDomainMode
         exchange = exchange
     )
 }
+
+/**
+ * Maps a [CompanyListingDomainModel] into a [CompanyListingEntity] for local persistence.
+ *
+ * @return Entity ready for insertion or update in Room; [CompanyListingEntity.id] is left null
+ *   so the database can assign a primary key on insert.
+ */
+fun CompanyListingDomainModel.toCompanyListingEntity(): CompanyListingEntity {
+    return CompanyListingEntity(
+        name = name,
+        symbol = symbol,
+        exchange = exchange
+    )
+}
