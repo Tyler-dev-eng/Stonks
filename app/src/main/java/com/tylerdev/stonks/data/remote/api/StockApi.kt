@@ -1,5 +1,6 @@
 package com.tylerdev.stonks.data.remote.api
 
+import com.tylerdev.stonks.BuildConfig
 import okhttp3.ResponseBody
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -23,5 +24,5 @@ interface StockApi {
      * @return Raw CSV payload containing symbol, name, exchange, asset type, and listing status.
      */
     @GET("query?function=LISTING_STATUS")
-    suspend fun getListings(@Query("apikey") apiKey: String): ResponseBody
+    suspend fun getListings(@Query("apikey") apiKey: String = BuildConfig.ALPHA_VANTAGE_API_KEY): ResponseBody
 }
