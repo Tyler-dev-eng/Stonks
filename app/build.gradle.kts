@@ -44,6 +44,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     // Compose BOM
     implementation(platform(libs.androidx.compose.bom))
@@ -70,7 +71,15 @@ dependencies {
     implementation(libs.moshi.kotlin)
     implementation(libs.logging.interceptor)
 
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    // OpenCSV
+    implementation(libs.opencsv)
+
+    // ROOM
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+
+    // Kotlin Extensions and Coroutines support for room
+    implementation(libs.androidx.room.ktx)
 
     // Serialization
     implementation(libs.kotlinx.serialization.json)
