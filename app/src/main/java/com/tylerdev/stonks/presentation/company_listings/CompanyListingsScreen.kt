@@ -1,10 +1,14 @@
 package com.tylerdev.stonks.presentation.company_listings
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -21,25 +25,54 @@ fun CompanyListingsScreen(
 
     val state = viewModel.state
 
-    PullToRefreshBox(
-        isRefreshing = viewModel.state.isRefreshing,
-        onRefresh = { viewModel.onEvent(CompanyListingEvent.Refresh) },
+    Column(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            OutlinedTextField(
-                value = state.searchQuery,
-                onValueChange = {
-                    viewModel.onEvent(CompanyListingEvent.OnSearchQueryChange(it))
-                },
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                placeholder = {
-                    Text(text = "Search...")
-                },
-                maxLines = 1,
-                singleLine = true
-            )
+        OutlinedTextField(
+            value = state.searchQuery,
+            onValueChange = {
+                viewModel.onEvent(
+                    CompanyListingEvent.OnSearchQueryChange(it)
+                )
+            },
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            placeholder = {
+                Text(text = "Search...")
+            },
+            maxLines = 1,
+            singleLine = true
+        )
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            onRefresh = {
+                viewModel.onEvent(CompanyListingEvent.Refresh)
+            }
+        ) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(state.companies.size) { i ->
+                    val company = state.companies[i]
+                    CompanyItem(
+                        company = company,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                //TODO: navigate to detail screen
+                            }
+                            .padding(16.dp)
+                    )
+                    if(i < state.companies.size - 1) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(16.dp),
+                            thickness = DividerDefaults.Thickness,
+                            color = DividerDefaults.color
+                        )
+                    }
+                }
+            }
         }
     }
 }

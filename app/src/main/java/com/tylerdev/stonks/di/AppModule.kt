@@ -25,50 +25,25 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class AppModule {
+object AppModule {
 
-    @Binds
+    @Provides
     @Singleton
-    abstract fun bindStockRepository(impl: StockRepositoryImpl): StockRepository
+    fun provideStockApi(): StockApi {
+        return Retrofit.Builder()
+            .baseUrl(StockApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create())
+            .build()
+            .create(StockApi::class.java)
+    }
 
-    @Binds
+    @Provides
     @Singleton
-    abstract fun bindCompanyListingParser(impl: CompanyListingParser): CSVParser<CompanyListingDomainModel>
-
-    companion object {
-
-        @Provides
-        @Singleton
-        fun provideOkHttpClient(): OkHttpClient =
-            OkHttpClient.Builder()
-                .addInterceptor(
-                    HttpLoggingInterceptor().apply {
-                        level = HttpLoggingInterceptor.Level.BASIC
-                    }
-                )
-                .build()
-
-        @Provides
-        @Singleton
-        fun provideStockApi(client: OkHttpClient): StockApi =
-            Retrofit.Builder()
-                .baseUrl(StockApi.BASE_URL)
-                .client(client)
-                .addConverterFactory(
-                    MoshiConverterFactory.create(
-                        Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-                    )
-                )
-                .build()
-                .create(StockApi::class.java)
-
-        @Provides
-        @Singleton
-        fun provideStockDatabase(@ApplicationContext context: Context): StockDatabase =
-            Room.databaseBuilder(
-                context,
-                StockDatabase::class.java,
-                "stock.db"
-            ).build()
+    fun provideStockDatabase(@ApplicationContext context: Context): StockDatabase {
+        return Room.databaseBuilder(
+            context,
+            StockDatabase::class.java,
+            "stonks.db"
+        ).build()
     }
 }
