@@ -17,6 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
+/**
+ * Company listings screen with search and pull-to-refresh.
+ *
+ * Observes [CompanyListingsViewModel.state] and dispatches [CompanyListingEvent] actions for
+ * query changes and refresh. Rendered from [NavGraph] as the [CompanyListings] start destination.
+ *
+ * @param viewModel Hilt-provided ViewModel; defaults to [hiltViewModel] in the current back stack entry.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompanyListingsScreen(
