@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.dagger)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 val localProperties =
@@ -83,6 +84,9 @@ dependencies {
     // Compose Material
     implementation(libs.androidx.compose.material3)
     implementation(libs.material.icons.extended)
+
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
 
     // Dagger Hilt
     implementation(libs.hilt)
