@@ -31,6 +31,10 @@ class CompanyListingsViewModel @Inject constructor(
 
     private var searchJob: Job? = null
 
+    init {
+        getCompanyListings()
+    }
+
     /**
      * Handles user actions from the listings screen.
      *
