@@ -6,6 +6,7 @@ import com.tylerdev.stonks.data.local.StockDatabase
 import com.tylerdev.stonks.data.mapper.toCompanyInfoDomainModel
 import com.tylerdev.stonks.data.mapper.toCompanyListingDomainModel
 import com.tylerdev.stonks.data.mapper.toCompanyListingEntity
+
 import com.tylerdev.stonks.data.remote.api.FinnhubApi
 import com.tylerdev.stonks.data.remote.api.StockApi
 import com.tylerdev.stonks.domain.model.CompanyInfoDomainModel
@@ -13,7 +14,6 @@ import com.tylerdev.stonks.domain.model.CompanyListingDomainModel
 import com.tylerdev.stonks.domain.model.IntradayInfoDomainModel
 import com.tylerdev.stonks.domain.repository.StockRepository
 import com.tylerdev.stonks.util.Resource
-import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okio.IOException
@@ -131,14 +131,11 @@ class StockRepositoryImpl @Inject constructor(
      */
     override suspend fun getCompanyInfo(symbol: String): Resource<CompanyInfoDomainModel> {
         return try {
-            val result = stockApi.getCompanyInfo(symbol)
-            Log.d("CompanyInfo", "response: $result")
-            if (result.symbol == null) {
-                Resource.Error(message = "No data found for $symbol")
-            } else {
-                Resource.Success(result.toCompanyInfoDomainModel())
-            }
-        }  catch (e: IOException) {
+            val result = finnhubApi.getCompanyProfile(symbol)
+            val domainModel = result.toCompanyInfoDomainModel()
+                ?: return Resource.Error(message = "No data found for $symbol")
+            Resource.Success(domainModel)
+        } catch (e: IOException) {
             e.printStackTrace()
             Resource.Error(message = "Couldn't load company data")
         } catch (e: HttpException) {

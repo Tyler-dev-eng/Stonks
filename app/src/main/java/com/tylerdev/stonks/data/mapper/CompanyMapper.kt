@@ -1,7 +1,7 @@
 package com.tylerdev.stonks.data.mapper
 
 import com.tylerdev.stonks.data.local.entity.CompanyListingEntity
-import com.tylerdev.stonks.data.remote.dto.CompanyInfoDto
+import com.tylerdev.stonks.data.remote.dto.FinnhubProfileDto
 import com.tylerdev.stonks.data.remote.dto.FinnhubSymbolDto
 import com.tylerdev.stonks.domain.model.CompanyInfoDomainModel
 import com.tylerdev.stonks.domain.model.CompanyListingDomainModel
@@ -40,11 +40,12 @@ fun FinnhubSymbolDto.toCompanyListingDomainModel(): CompanyListingDomainModel? {
     )
 }
 
-fun CompanyInfoDto.toCompanyInfoDomainModel() =
-    CompanyInfoDomainModel(
-        symbol = symbol ?: "",
-        description = description ?: "",
-        name = name ?: "",
+fun FinnhubProfileDto.toCompanyInfoDomainModel(): CompanyInfoDomainModel? {
+    return CompanyInfoDomainModel(
+        symbol = ticker ?: return null,
+        name = name ?: return null,
         country = country ?: "",
-        industry = industry ?: ""
+        industry = industry ?: "",
+        description = ""
     )
+}
