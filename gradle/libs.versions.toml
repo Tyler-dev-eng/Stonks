@@ -22,8 +22,13 @@ opencsv = "5.12.0"
 retrofit = "3.0.0"
 roomRuntime = "2.8.4"
 navigationCompose = "2.9.0"
+vico = "3.2.3"
 
 [libraries]
+vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
+vico-compose-m2 = { group = "com.patrykandpatrick.vico", name = "compose-m2", version.ref = "vico" }
+vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
+vico-compose-glance = { group = "com.patrykandpatrick.vico", name = "compose-glance", version.ref = "vico" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }

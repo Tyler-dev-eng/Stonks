@@ -113,6 +113,12 @@ dependencies {
     // Serialization
     implementation(libs.kotlinx.serialization.json)
 
+    // Vico Charts
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m2)
+    implementation(libs.vico.compose.m3)
+    implementation(libs.vico.compose.glance)
+
     // Unit Testing
     testImplementation(libs.junit)
 
