@@ -16,6 +16,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.tylerdev.stonks.domain.model.StockQuoteDomainModel
 
@@ -31,7 +33,7 @@ fun CompanyInfoScreen(
     symbol: String,
     viewModel: CompanyInfoViewModel = hiltViewModel(),
 ) {
-    val state = viewModel.state
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     when {
         state.isLoading -> Box(
@@ -46,7 +48,7 @@ fun CompanyInfoScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = state.error,
+                text = state.error!!,
                 color = MaterialTheme.colorScheme.error,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(16.dp)

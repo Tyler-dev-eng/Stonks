@@ -1,14 +1,15 @@
 package com.tylerdev.stonks.presentation.company_info
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tylerdev.stonks.domain.usecase.GetCompanyDetailUseCase
 import com.tylerdev.stonks.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,21 +19,24 @@ class CompanyInfoViewModel @Inject constructor(
     private val getCompanyDetail: GetCompanyDetailUseCase
 ) : ViewModel() {
 
-    var state by mutableStateOf(CompanyInfoState())
+    private val _state = MutableStateFlow(CompanyInfoState())
+    val state: StateFlow<CompanyInfoState> = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
             val symbol = savedStateHandle.get<String>("symbol") ?: return@launch
             getCompanyDetail(symbol).collect { result ->
-                state = when (result) {
-                    is Resource.Loading -> state.copy(isLoading = result.isLoading)
-                    is Resource.Success -> state.copy(
-                        company = result.data?.info,
-                        quote = result.data?.quote,
-                        error = null,
-                        isLoading = false
-                    )
-                    is Resource.Error -> state.copy(error = result.message, isLoading = false)
+                _state.update {
+                    when (result) {
+                        is Resource.Loading -> it.copy(isLoading = result.isLoading)
+                        is Resource.Success -> it.copy(
+                            company = result.data?.info,
+                            quote = result.data?.quote,
+                            error = null,
+                            isLoading = false
+                        )
+                        is Resource.Error -> it.copy(error = result.message, isLoading = false)
+                    }
                 }
             }
         }
