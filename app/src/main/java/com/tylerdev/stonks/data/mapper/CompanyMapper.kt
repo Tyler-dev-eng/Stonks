@@ -2,9 +2,11 @@ package com.tylerdev.stonks.data.mapper
 
 import com.tylerdev.stonks.data.local.entity.CompanyListingEntity
 import com.tylerdev.stonks.data.remote.dto.FinnhubProfileDto
+import com.tylerdev.stonks.data.remote.dto.FinnhubQuoteDto
 import com.tylerdev.stonks.data.remote.dto.FinnhubSymbolDto
 import com.tylerdev.stonks.domain.model.CompanyInfoDomainModel
 import com.tylerdev.stonks.domain.model.CompanyListingDomainModel
+import com.tylerdev.stonks.domain.model.StockQuoteDomainModel
 
 /**
  * Maps a cached [CompanyListingEntity] row into a [CompanyListingDomainModel].
@@ -47,5 +49,15 @@ fun FinnhubProfileDto.toCompanyInfoDomainModel(): CompanyInfoDomainModel? {
         country = country ?: "",
         industry = industry ?: "",
         description = ""
+    )
+}
+
+fun FinnhubQuoteDto.toStockQuoteDomainModel(): StockQuoteDomainModel? {
+    return StockQuoteDomainModel(
+        current = current ?: return null,
+        high = high ?: return null,
+        low = low ?: return null,
+        open = open ?: return null,
+        previousClose = previousClose ?: return null
     )
 }

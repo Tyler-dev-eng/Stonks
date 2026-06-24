@@ -2,6 +2,7 @@ package com.tylerdev.stonks.data.remote.api
 
 import com.tylerdev.stonks.BuildConfig
 import com.tylerdev.stonks.data.remote.dto.FinnhubProfileDto
+import com.tylerdev.stonks.data.remote.dto.FinnhubQuoteDto
 import com.tylerdev.stonks.data.remote.dto.FinnhubSymbolDto
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -22,4 +23,10 @@ interface FinnhubApi {
         @Query("symbol") symbol: String,
         @Query("token") token: String = BuildConfig.FINNHUB_API_KEY
     ): FinnhubProfileDto
+
+    @GET("quote")
+    suspend fun getQuote(
+        @Query("symbol") symbol: String,
+        @Query("token") token: String = BuildConfig.FINNHUB_API_KEY
+    ): FinnhubQuoteDto
 }

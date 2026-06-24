@@ -13,20 +13,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * ViewModel for the company detail screen.
- *
- * Reads the ticker [symbol] from navigation [SavedStateHandle] and loads company overview and
- * intraday data in parallel via [StockRepository]. Exposes [state] for Compose UI on the
- * [CompanyDetail] route.
- */
+private const val RATE_LIMIT_DELAY_MS = 1100L
+
 @HiltViewModel
 class CompanyInfoViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val repository: StockRepository
 ) : ViewModel() {
 
-    /** Current screen state observed by the company detail UI. */
     var state by mutableStateOf(CompanyInfoState())
 
     init {
@@ -41,9 +35,9 @@ class CompanyInfoViewModel @Inject constructor(
             }
 
             if (state.company != null) {
-                delay(1100L)
-                when (val result = repository.getIntradayInfo(symbol)) {
-                    is Resource.Success -> state = state.copy(stockInfos = result.data ?: emptyList())
+                delay(RATE_LIMIT_DELAY_MS)
+                when (val result = repository.getStockQuote(symbol)) {
+                    is Resource.Success -> state = state.copy(quote = result.data)
                     else -> Unit
                 }
             }

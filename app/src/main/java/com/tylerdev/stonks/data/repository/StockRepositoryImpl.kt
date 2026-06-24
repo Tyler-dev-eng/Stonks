@@ -1,17 +1,14 @@
 package com.tylerdev.stonks.data.repository
 
-import com.tylerdev.stonks.data.csv.CSVParser
-import com.tylerdev.stonks.data.csv.IntradayInfoParser
 import com.tylerdev.stonks.data.local.StockDatabase
 import com.tylerdev.stonks.data.mapper.toCompanyInfoDomainModel
 import com.tylerdev.stonks.data.mapper.toCompanyListingDomainModel
 import com.tylerdev.stonks.data.mapper.toCompanyListingEntity
-
+import com.tylerdev.stonks.data.mapper.toStockQuoteDomainModel
 import com.tylerdev.stonks.data.remote.api.FinnhubApi
-import com.tylerdev.stonks.data.remote.api.StockApi
 import com.tylerdev.stonks.domain.model.CompanyInfoDomainModel
 import com.tylerdev.stonks.domain.model.CompanyListingDomainModel
-import com.tylerdev.stonks.domain.model.IntradayInfoDomainModel
+import com.tylerdev.stonks.domain.model.StockQuoteDomainModel
 import com.tylerdev.stonks.domain.repository.StockRepository
 import com.tylerdev.stonks.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -21,30 +18,14 @@ import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Data-layer implementation of [StockRepository].
- *
- * Coordinates [StockApi], [StockDatabase], and typed [CSVParser] instances to serve listings,
- * intraday prices, and company overview data. Listings use a cache-first [Flow] strategy; intraday
- * and overview calls fetch directly from the remote service and return a single [Resource].
- */
 @Singleton
 class StockRepositoryImpl @Inject constructor(
-    private val stockApi: StockApi,
     private val finnhubApi: FinnhubApi,
-    stockDb: StockDatabase,
-    private val intradayInfoParser: CSVParser<IntradayInfoDomainModel>
+    stockDb: StockDatabase
 ) : StockRepository {
 
     private val dao = stockDb.dao
 
-    /**
-     * @see StockRepository.getCompanyListings
-     *
-     * Emits cached matches for [query] first, then optionally fetches and parses the remote CSV.
-     * On a successful refresh, replaces all cached rows and emits the full updated listing set.
-     * Network failures emit [Resource.Error] while preserving any data already emitted.
-     */
     override suspend fun getCompanyListings(
         fetchFromRemote: Boolean,
         query: String
@@ -53,11 +34,7 @@ class StockRepositoryImpl @Inject constructor(
             emit(Resource.Loading(true))
 
             val localListings = dao.searchCompanyListing(query)
-            emit(
-                Resource.Success(
-                    data = localListings.map { it.toCompanyListingDomainModel() }
-                )
-            )
+            emit(Resource.Success(data = localListings.map { it.toCompanyListingDomainModel() }))
 
             val isDbEmpty = localListings.isEmpty() && query.isBlank()
             val shouldJustLoadFromCache = !isDbEmpty && !fetchFromRemote
@@ -80,14 +57,10 @@ class StockRepositoryImpl @Inject constructor(
 
             remoteListings?.let { listings ->
                 dao.clearCompanyListings()
-                dao.insertCompanyListings(
-                    listings.map { it.toCompanyListingEntity() }
-                )
+                dao.insertCompanyListings(listings.map { it.toCompanyListingEntity() })
                 emit(
                     Resource.Success(
-                        data = dao
-                            .searchCompanyListing("")
-                            .map { it.toCompanyListingDomainModel() }
+                        data = dao.searchCompanyListing("").map { it.toCompanyListingDomainModel() }
                     )
                 )
                 emit(Resource.Loading(false))
@@ -95,52 +68,32 @@ class StockRepositoryImpl @Inject constructor(
         }
     }
 
-    /**
-     * @see StockRepository.getIntradayInfo
-     *
-     * Fetches hourly intraday CSV for [symbol], parses it via [intradayInfoParser], and returns
-     * the filtered, sorted domain models. Network failures yield [Resource.Error].
-     *
-     * @param symbol Ticker symbol to query (e.g. AAPL).
-     */
-    override suspend fun getIntradayInfo(symbol: String): Resource<List<IntradayInfoDomainModel>> {
-       return try {
-           val response = stockApi.getIntradayInfo(symbol)
-           val results = intradayInfoParser.parser(response.byteStream())
-           if (results.isEmpty()) {
-               Resource.Error(message = "No chart data available for $symbol")
-           } else {
-               Resource.Success(results)
-           }
-       } catch (e: IOException) {
-           e.printStackTrace()
-           Resource.Error(message = "Couldn't load intraday data")
-       } catch (e: HttpException) {
-           e.printStackTrace()
-           Resource.Error(message = "Couldn't load intraday data")
-       }
+    override suspend fun getStockQuote(symbol: String): Resource<StockQuoteDomainModel> {
+        return try {
+            val quote = finnhubApi.getQuote(symbol).toStockQuoteDomainModel()
+                ?: return Resource.Error("No quote data available for $symbol")
+            Resource.Success(quote)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Resource.Error("Couldn't load quote data")
+        } catch (e: HttpException) {
+            e.printStackTrace()
+            Resource.Error("Couldn't load quote data")
+        }
     }
 
-    /**
-     * @see StockRepository.getCompanyInfo
-     *
-     * Fetches the Alpha Vantage overview for [symbol] and maps the response to
-     * [CompanyInfoDomainModel]. Network failures yield [Resource.Error].
-     *
-     * @param symbol Ticker symbol to query (e.g. AAPL).
-     */
     override suspend fun getCompanyInfo(symbol: String): Resource<CompanyInfoDomainModel> {
         return try {
             val result = finnhubApi.getCompanyProfile(symbol)
             val domainModel = result.toCompanyInfoDomainModel()
-                ?: return Resource.Error(message = "No data found for $symbol")
+                ?: return Resource.Error("No data found for $symbol")
             Resource.Success(domainModel)
         } catch (e: IOException) {
             e.printStackTrace()
-            Resource.Error(message = "Couldn't load company data")
+            Resource.Error("Couldn't load company data")
         } catch (e: HttpException) {
             e.printStackTrace()
-            Resource.Error(message = "Couldn't load company data")
+            Resource.Error("Couldn't load company data")
         }
     }
 }
