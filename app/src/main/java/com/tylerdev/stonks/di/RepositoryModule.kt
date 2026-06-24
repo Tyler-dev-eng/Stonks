@@ -2,8 +2,10 @@ package com.tylerdev.stonks.di
 
 import com.tylerdev.stonks.data.csv.CSVParser
 import com.tylerdev.stonks.data.csv.CompanyListingParser
+import com.tylerdev.stonks.data.csv.IntradayInfoParser
 import com.tylerdev.stonks.data.repository.StockRepositoryImpl
 import com.tylerdev.stonks.domain.model.CompanyListingDomainModel
+import com.tylerdev.stonks.domain.model.IntradayInfoDomainModel
 import com.tylerdev.stonks.domain.repository.StockRepository
 import dagger.Binds
 import dagger.Module
@@ -29,6 +31,13 @@ abstract class RepositoryModule {
     abstract fun bindCompanyListingParser(
         companyListingParser: CompanyListingParser
     ): CSVParser<CompanyListingDomainModel>
+
+    @Binds
+    @Singleton
+    abstract fun bindIntradayInfoParser(
+        intradayInfoParser: IntradayInfoParser
+    ): CSVParser<IntradayInfoDomainModel>
+
 
     /**
      * Binds [StockRepositoryImpl] as the app [StockRepository] implementation.

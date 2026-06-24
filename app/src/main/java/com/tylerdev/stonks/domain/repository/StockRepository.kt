@@ -1,6 +1,8 @@
 package com.tylerdev.stonks.domain.repository
 
+import com.tylerdev.stonks.domain.model.CompanyInfoDomainModel
 import com.tylerdev.stonks.domain.model.CompanyListingDomainModel
+import com.tylerdev.stonks.domain.model.IntradayInfoDomainModel
 import com.tylerdev.stonks.util.Resource
 import kotlinx.coroutines.flow.Flow
 
@@ -28,4 +30,12 @@ interface StockRepository {
         fetchFromRemote: Boolean,
         query: String
     ): Flow<Resource<List<CompanyListingDomainModel>>>
+
+    suspend fun getIntradayInfo(
+        symbol: String
+    ): Resource<List<IntradayInfoDomainModel>>
+
+    suspend fun getCompanyInfo(
+        symbol: String
+    ): Resource<CompanyInfoDomainModel>
 }

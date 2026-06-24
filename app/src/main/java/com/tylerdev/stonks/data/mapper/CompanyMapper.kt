@@ -1,6 +1,8 @@
 package com.tylerdev.stonks.data.mapper
 
 import com.tylerdev.stonks.data.local.entity.CompanyListingEntity
+import com.tylerdev.stonks.data.remote.dto.CompanyInfoDto
+import com.tylerdev.stonks.domain.model.CompanyInfoDomainModel
 import com.tylerdev.stonks.domain.model.CompanyListingDomainModel
 
 /**
@@ -29,3 +31,11 @@ fun CompanyListingDomainModel.toCompanyListingEntity() =
         exchange = exchange
     )
 
+fun CompanyInfoDto.toCompanyInfoDomainModel() =
+    CompanyInfoDomainModel(
+        symbol = symbol ?: "",
+        description = description ?: "",
+        name = name ?: "",
+        country = country ?: "",
+        industry = industry ?: ""
+    )

@@ -1,11 +1,15 @@
 package com.tylerdev.stonks.data.repository
 
 import com.tylerdev.stonks.data.csv.CSVParser
+import com.tylerdev.stonks.data.csv.IntradayInfoParser
 import com.tylerdev.stonks.data.local.StockDatabase
+import com.tylerdev.stonks.data.mapper.toCompanyInfoDomainModel
 import com.tylerdev.stonks.data.mapper.toCompanyListingDomainModel
 import com.tylerdev.stonks.data.mapper.toCompanyListingEntity
 import com.tylerdev.stonks.data.remote.api.StockApi
+import com.tylerdev.stonks.domain.model.CompanyInfoDomainModel
 import com.tylerdev.stonks.domain.model.CompanyListingDomainModel
+import com.tylerdev.stonks.domain.model.IntradayInfoDomainModel
 import com.tylerdev.stonks.domain.repository.StockRepository
 import com.tylerdev.stonks.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -26,7 +30,8 @@ import javax.inject.Singleton
 class StockRepositoryImpl @Inject constructor(
     private val stockApi: StockApi,
     stockDb: StockDatabase,
-    private val companyListingParser: CSVParser<CompanyListingDomainModel>
+    private val companyListingParser: CSVParser<CompanyListingDomainModel>,
+    private val intradayInfoParser: CSVParser<IntradayInfoDomainModel>
 ) : StockRepository {
 
     private val dao = stockDb.dao
@@ -86,6 +91,33 @@ class StockRepositoryImpl @Inject constructor(
                 )
                 emit(Resource.Loading(false))
             }
+        }
+    }
+
+    override suspend fun getIntradayInfo(symbol: String): Resource<List<IntradayInfoDomainModel>> {
+       return try {
+           val response = stockApi.getIntradayInfo(symbol)
+           val results = intradayInfoParser.parser(response.byteStream())
+           Resource.Success(results)
+       } catch (e: IOException) {
+           e.printStackTrace()
+           Resource.Error(message = "Couldn't load intraday data")
+       } catch (e: HttpException) {
+           e.printStackTrace()
+           Resource.Error(message = "Couldn't load intraday data")
+       }
+    }
+
+    override suspend fun getCompanyInfo(symbol: String): Resource<CompanyInfoDomainModel> {
+        return try {
+            val result = stockApi.getCompanyInfo(symbol)
+            Resource.Success(result.toCompanyInfoDomainModel())
+        }  catch (e: IOException) {
+            e.printStackTrace()
+            Resource.Error(message = "Couldn't load company data")
+        } catch (e: HttpException) {
+            e.printStackTrace()
+            Resource.Error(message = "Couldn't load company data")
         }
     }
 }
