@@ -34,6 +34,11 @@ android {
             "ALPHA_VANTAGE_API_KEY",
             "\"${localProperties.getProperty("ALPHA_VANTAGE_API_KEY", "")}\"",
         )
+        buildConfigField(
+            "String",
+            "FINNHUB_API_KEY",
+            "\"${localProperties.getProperty("FINNHUB_API_KEY", "")}\"",
+        )
     }
 
     buildTypes {

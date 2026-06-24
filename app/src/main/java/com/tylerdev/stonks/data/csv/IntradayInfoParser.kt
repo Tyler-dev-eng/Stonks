@@ -8,7 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.time.LocalDateTime
+import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -42,9 +42,9 @@ class IntradayInfoParser @Inject constructor() : CSVParser<IntradayInfoDomainMod
                     val dto = IntradayInfoDto(timestamp, close.toDouble())
                     dto.toIntradayInfoDomainModel()
                 }.filter {
-                    it.date.dayOfMonth == LocalDateTime.now().minusDays(4).dayOfMonth
+                    it.date.toLocalDate() >= LocalDate.now().minusDays(90)
                 }.sortedBy {
-                    it.date.hour
+                    it.date
                 }
                 .also {
                     csvReader.close()

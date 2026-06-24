@@ -28,6 +28,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompanyListingsScreen(
+    onCompanyClick: (symbol: String) -> Unit,
     viewModel: CompanyListingsViewModel = hiltViewModel(),
 ) {
 
@@ -67,9 +68,7 @@ fun CompanyListingsScreen(
                         company = company,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable {
-                                //TODO: navigate to detail screen
-                            }
+                            .clickable { onCompanyClick(company.symbol) }
                             .padding(16.dp)
                     )
                     if(i < state.companies.size - 1) {

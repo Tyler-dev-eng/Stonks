@@ -2,6 +2,7 @@ package com.tylerdev.stonks.data.mapper
 
 import com.tylerdev.stonks.data.local.entity.CompanyListingEntity
 import com.tylerdev.stonks.data.remote.dto.CompanyInfoDto
+import com.tylerdev.stonks.data.remote.dto.FinnhubSymbolDto
 import com.tylerdev.stonks.domain.model.CompanyInfoDomainModel
 import com.tylerdev.stonks.domain.model.CompanyListingDomainModel
 
@@ -30,6 +31,14 @@ fun CompanyListingDomainModel.toCompanyListingEntity() =
         symbol = symbol,
         exchange = exchange
     )
+
+fun FinnhubSymbolDto.toCompanyListingDomainModel(): CompanyListingDomainModel? {
+    return CompanyListingDomainModel(
+        symbol = symbol ?: return null,
+        name = description ?: return null,
+        exchange = mic ?: ""
+    )
+}
 
 fun CompanyInfoDto.toCompanyInfoDomainModel() =
     CompanyInfoDomainModel(

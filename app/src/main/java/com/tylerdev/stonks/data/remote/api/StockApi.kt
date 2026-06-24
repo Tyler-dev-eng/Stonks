@@ -19,22 +19,13 @@ interface StockApi {
     }
 
     /**
-     * Fetches the full set of active and delisted stock symbols.
-     *
-     * @param apiKey Alpha Vantage API key used to authenticate the request.
-     * @return Raw CSV payload containing symbol, name, exchange, asset type, and listing status.
-     */
-    @GET("query?function=LISTING_STATUS")
-    suspend fun getListings(@Query("apikey") apiKey: String = BuildConfig.ALPHA_VANTAGE_API_KEY): ResponseBody
-
-    /**
      * Fetches hourly intraday price data for the given symbol.
      *
      * @param symbol Ticker symbol to query (e.g. AAPL).
      * @param apiKey Alpha Vantage API key used to authenticate the request.
      * @return Raw CSV time series with timestamp, OHLC, and volume columns.
      */
-    @GET("query?function=TIME_SERIES_INTRADAY&interval=60min&datatype=csv")
+    @GET("query?function=TIME_SERIES_DAILY&datatype=csv")
     suspend fun getIntradayInfo(
         @Query("symbol") symbol: String,
         @Query("apikey") apiKey: String = BuildConfig.ALPHA_VANTAGE_API_KEY

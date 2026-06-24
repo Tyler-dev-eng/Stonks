@@ -4,14 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import com.tylerdev.stonks.data.csv.CSVParser
-import com.tylerdev.stonks.data.csv.CompanyListingParser
 import com.tylerdev.stonks.data.local.StockDatabase
+import com.tylerdev.stonks.data.remote.api.FinnhubApi
 import com.tylerdev.stonks.data.remote.api.StockApi
-import com.tylerdev.stonks.data.repository.StockRepositoryImpl
-import com.tylerdev.stonks.domain.model.CompanyListingDomainModel
-import com.tylerdev.stonks.domain.repository.StockRepository
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,10 +35,14 @@ object AppModule {
      */
     @Provides
     @Singleton
-    fun provideStockApi(): StockApi {
+    fun provideStockApi(client: OkHttpClient): StockApi {
+        val moshi = Moshi.Builder()
+            .addLast(KotlinJsonAdapterFactory())
+            .build()
         return Retrofit.Builder()
             .baseUrl(StockApi.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create())
+            .client(client)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(StockApi::class.java)
     }
@@ -54,6 +53,31 @@ object AppModule {
      * @param context Application context used to open the on-device database file.
      * @return Singleton [StockDatabase] backed by `stonks.db`.
      */
+    @Provides
+    @Singleton
+    fun provideFinnhubApi(client: OkHttpClient): FinnhubApi {
+        val moshi = Moshi.Builder()
+            .addLast(KotlinJsonAdapterFactory())
+            .build()
+        return Retrofit.Builder()
+            .baseUrl(FinnhubApi.BASE_URL)
+            .client(client)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+            .create(FinnhubApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(): OkHttpClient {
+        val logging = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        return OkHttpClient.Builder()
+            .addInterceptor(logging)
+            .build()
+    }
+
     @Provides
     @Singleton
     fun provideStockDatabase(@ApplicationContext context: Context): StockDatabase {

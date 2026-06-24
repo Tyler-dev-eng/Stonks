@@ -20,4 +20,4 @@ data object CompanyListings
  * @property symbol Ticker symbol identifying the company to display (e.g. AAPL).
  */
 @Serializable
-data class CompanyDetail(val symbol: String)
+data class CompanyInfo(val symbol: String)

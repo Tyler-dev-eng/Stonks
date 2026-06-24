@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.tylerdev.stonks.domain.repository.StockRepository
 import com.tylerdev.stonks.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,43 +33,22 @@ class CompanyInfoViewModel @Inject constructor(
         viewModelScope.launch {
             val symbol = savedStateHandle.get<String>("symbol") ?: return@launch
             state = state.copy(isLoading = true)
-            val companyInfoResult = async { repository.getCompanyInfo(symbol) }
-            val intradayInfoResult = async { repository.getIntradayInfo(symbol) }
-            when(val result = companyInfoResult.await()) {
-                is Resource.Success -> {
-                    state = state.copy(
-                        company = result.data,
-                        isLoading = false,
-                        error = null
-                    )
-                }
-                is Resource.Error -> {
-                    state = state.copy(
-                        isLoading = false,
-                        error = result.message,
-                        company = null
-                    )
-                }
+
+            when (val result = repository.getCompanyInfo(symbol)) {
+                is Resource.Success -> state = state.copy(company = result.data, error = null)
+                is Resource.Error -> state = state.copy(error = result.message, company = null)
                 else -> Unit
             }
 
-            when(val result = intradayInfoResult.await()) {
-                is Resource.Success -> {
-                    state = state.copy(
-                        stockInfos = result.data ?: emptyList(),
-                        isLoading = false,
-                        error = null
-                    )
+            if (state.company != null) {
+                delay(1100L)
+                when (val result = repository.getIntradayInfo(symbol)) {
+                    is Resource.Success -> state = state.copy(stockInfos = result.data ?: emptyList())
+                    else -> Unit
                 }
-                is Resource.Error -> {
-                    state = state.copy(
-                        isLoading = false,
-                        error = result.message,
-                        company = null
-                    )
-                }
-                else -> Unit
             }
+
+            state = state.copy(isLoading = false)
         }
     }
 }

@@ -6,12 +6,14 @@ import com.tylerdev.stonks.data.local.StockDatabase
 import com.tylerdev.stonks.data.mapper.toCompanyInfoDomainModel
 import com.tylerdev.stonks.data.mapper.toCompanyListingDomainModel
 import com.tylerdev.stonks.data.mapper.toCompanyListingEntity
+import com.tylerdev.stonks.data.remote.api.FinnhubApi
 import com.tylerdev.stonks.data.remote.api.StockApi
 import com.tylerdev.stonks.domain.model.CompanyInfoDomainModel
 import com.tylerdev.stonks.domain.model.CompanyListingDomainModel
 import com.tylerdev.stonks.domain.model.IntradayInfoDomainModel
 import com.tylerdev.stonks.domain.repository.StockRepository
 import com.tylerdev.stonks.util.Resource
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okio.IOException
@@ -29,8 +31,8 @@ import javax.inject.Singleton
 @Singleton
 class StockRepositoryImpl @Inject constructor(
     private val stockApi: StockApi,
+    private val finnhubApi: FinnhubApi,
     stockDb: StockDatabase,
-    private val companyListingParser: CSVParser<CompanyListingDomainModel>,
     private val intradayInfoParser: CSVParser<IntradayInfoDomainModel>
 ) : StockRepository {
 
@@ -65,8 +67,7 @@ class StockRepositoryImpl @Inject constructor(
             }
 
             val remoteListings = try {
-                val response = stockApi.getListings()
-                companyListingParser.parser(response.byteStream())
+                finnhubApi.getListings().mapNotNull { it.toCompanyListingDomainModel() }
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(Resource.Error("Couldn't load data"))
@@ -106,7 +107,11 @@ class StockRepositoryImpl @Inject constructor(
        return try {
            val response = stockApi.getIntradayInfo(symbol)
            val results = intradayInfoParser.parser(response.byteStream())
-           Resource.Success(results)
+           if (results.isEmpty()) {
+               Resource.Error(message = "No chart data available for $symbol")
+           } else {
+               Resource.Success(results)
+           }
        } catch (e: IOException) {
            e.printStackTrace()
            Resource.Error(message = "Couldn't load intraday data")
@@ -127,7 +132,12 @@ class StockRepositoryImpl @Inject constructor(
     override suspend fun getCompanyInfo(symbol: String): Resource<CompanyInfoDomainModel> {
         return try {
             val result = stockApi.getCompanyInfo(symbol)
-            Resource.Success(result.toCompanyInfoDomainModel())
+            Log.d("CompanyInfo", "response: $result")
+            if (result.symbol == null) {
+                Resource.Error(message = "No data found for $symbol")
+            } else {
+                Resource.Success(result.toCompanyInfoDomainModel())
+            }
         }  catch (e: IOException) {
             e.printStackTrace()
             Resource.Error(message = "Couldn't load company data")
