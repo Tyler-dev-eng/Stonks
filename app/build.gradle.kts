@@ -118,6 +118,9 @@ dependencies {
     // Serialization
     implementation(libs.kotlinx.serialization.json)
 
+    // Coil
+    implementation(libs.coil.compose)
+
     // Vico Charts
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m2)

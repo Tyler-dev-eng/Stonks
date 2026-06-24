@@ -8,14 +8,10 @@ package com.tylerdev.stonks.domain.model
  * DTOs or Retrofit types.
  */
 data class CompanyInfoDomainModel(
-    /** Ticker symbol identifying the company (e.g. AAPL). */
     val symbol: String,
-    /** Long-form business description of the company. */
     val description: String,
-    /** Display name of the company. */
     val name: String,
-    /** Country where the company is headquartered. */
     val country: String,
-    /** Primary industry sector of the company. */
-    val industry: String
+    val industry: String,
+    val logoUrl: String
 )

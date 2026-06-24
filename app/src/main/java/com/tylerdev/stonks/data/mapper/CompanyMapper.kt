@@ -48,7 +48,8 @@ fun FinnhubProfileDto.toCompanyInfoDomainModel(): CompanyInfoDomainModel? {
         name = name ?: return null,
         country = country ?: "",
         industry = industry ?: "",
-        description = ""
+        description = "",
+        logoUrl = logoUrl ?: ""
     )
 }
 
