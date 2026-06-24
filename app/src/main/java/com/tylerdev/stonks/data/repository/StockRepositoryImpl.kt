@@ -22,9 +22,9 @@ import javax.inject.Singleton
 /**
  * Data-layer implementation of [StockRepository].
  *
- * Coordinates the remote [StockApi], local [StockDatabase], and [CSVParser] to serve company
- * listings. Uses a cache-first strategy: cached results are emitted immediately, then the remote
- * source is refreshed when the cache is empty or a remote refresh is requested.
+ * Coordinates [StockApi], [StockDatabase], and typed [CSVParser] instances to serve listings,
+ * intraday prices, and company overview data. Listings use a cache-first [Flow] strategy; intraday
+ * and overview calls fetch directly from the remote service and return a single [Resource].
  */
 @Singleton
 class StockRepositoryImpl @Inject constructor(
@@ -94,6 +94,14 @@ class StockRepositoryImpl @Inject constructor(
         }
     }
 
+    /**
+     * @see StockRepository.getIntradayInfo
+     *
+     * Fetches hourly intraday CSV for [symbol], parses it via [intradayInfoParser], and returns
+     * the filtered, sorted domain models. Network failures yield [Resource.Error].
+     *
+     * @param symbol Ticker symbol to query (e.g. AAPL).
+     */
     override suspend fun getIntradayInfo(symbol: String): Resource<List<IntradayInfoDomainModel>> {
        return try {
            val response = stockApi.getIntradayInfo(symbol)
@@ -108,6 +116,14 @@ class StockRepositoryImpl @Inject constructor(
        }
     }
 
+    /**
+     * @see StockRepository.getCompanyInfo
+     *
+     * Fetches the Alpha Vantage overview for [symbol] and maps the response to
+     * [CompanyInfoDomainModel]. Network failures yield [Resource.Error].
+     *
+     * @param symbol Ticker symbol to query (e.g. AAPL).
+     */
     override suspend fun getCompanyInfo(symbol: String): Resource<CompanyInfoDomainModel> {
         return try {
             val result = stockApi.getCompanyInfo(symbol)

@@ -17,7 +17,7 @@ import javax.inject.Singleton
  * Hilt module binding domain contracts to data-layer implementations.
  *
  * Keeps injection sites dependent on abstractions ([StockRepository], [CSVParser]) while
- * supplying concrete classes at runtime.
+ * supplying concrete parser and repository classes at runtime.
  */
 @Module
 @InstallIn(SingletonComponent::class)
@@ -32,12 +32,14 @@ abstract class RepositoryModule {
         companyListingParser: CompanyListingParser
     ): CSVParser<CompanyListingDomainModel>
 
+    /**
+     * Binds [IntradayInfoParser] as the [CSVParser] for [IntradayInfoDomainModel] rows.
+     */
     @Binds
     @Singleton
     abstract fun bindIntradayInfoParser(
         intradayInfoParser: IntradayInfoParser
     ): CSVParser<IntradayInfoDomainModel>
-
 
     /**
      * Binds [StockRepositoryImpl] as the app [StockRepository] implementation.

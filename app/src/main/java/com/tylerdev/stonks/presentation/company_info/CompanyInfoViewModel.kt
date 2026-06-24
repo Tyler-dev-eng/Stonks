@@ -13,12 +13,20 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for the company detail screen.
+ *
+ * Reads the ticker [symbol] from navigation [SavedStateHandle] and loads company overview and
+ * intraday data in parallel via [StockRepository]. Exposes [state] for Compose UI on the
+ * [CompanyDetail] route.
+ */
 @HiltViewModel
 class CompanyInfoViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val repository: StockRepository
 ) : ViewModel() {
 
+    /** Current screen state observed by the company detail UI. */
     var state by mutableStateOf(CompanyInfoState())
 
     init {

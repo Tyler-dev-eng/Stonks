@@ -7,11 +7,11 @@ import com.tylerdev.stonks.util.Resource
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Contract for accessing company listing data.
+ * Contract for accessing stock market data.
  *
  * Defined in the domain layer so use cases depend on abstractions rather than data-layer
- * implementations. Concrete implementations coordinate remote API calls, local caching, and
- * mapping into [CompanyListingDomainModel].
+ * implementations. Concrete implementations coordinate remote API calls, local caching where
+ * applicable, and mapping into domain models.
  */
 interface StockRepository {
 
@@ -31,10 +31,22 @@ interface StockRepository {
         query: String
     ): Flow<Resource<List<CompanyListingDomainModel>>>
 
+    /**
+     * Loads hourly intraday price observations for a company.
+     *
+     * @param symbol Ticker symbol to query (e.g. AAPL).
+     * @return [Resource.Success] with parsed intraday rows, or [Resource.Error] on failure.
+     */
     suspend fun getIntradayInfo(
         symbol: String
     ): Resource<List<IntradayInfoDomainModel>>
 
+    /**
+     * Loads company profile and overview data for a symbol.
+     *
+     * @param symbol Ticker symbol to query (e.g. AAPL).
+     * @return [Resource.Success] with overview fields, or [Resource.Error] on failure.
+     */
     suspend fun getCompanyInfo(
         symbol: String
     ): Resource<CompanyInfoDomainModel>
