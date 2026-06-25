@@ -51,9 +51,11 @@ class MainActivity : ComponentActivity() {
                                 NavigationBarItem(
                                     selected = onMarkets,
                                     onClick = {
-                                        navController.navigate(CompanyListings) {
-                                            popUpTo(CompanyListings) { inclusive = false }
-                                            launchSingleTop = true
+                                        // popBackStack resumes the existing CompanyListings entry
+                                        // (STARTED→RESUMED). Using navigate() here would create a
+                                        // new entry stuck at CREATED, breaking collectAsStateWithLifecycle.
+                                        if (!onMarkets) {
+                                            navController.popBackStack<CompanyListings>(inclusive = false)
                                         }
                                     },
                                     icon = {
