@@ -1,6 +1,7 @@
 package com.tylerdev.stonks.data.remote.api
 
 import com.tylerdev.stonks.BuildConfig
+import com.tylerdev.stonks.data.remote.dto.FinnhubNewsDto
 import com.tylerdev.stonks.data.remote.dto.FinnhubProfileDto
 import com.tylerdev.stonks.data.remote.dto.FinnhubQuoteDto
 import com.tylerdev.stonks.data.remote.dto.FinnhubSymbolDto
@@ -29,4 +30,10 @@ interface FinnhubApi {
         @Query("symbol") symbol: String,
         @Query("token") token: String = BuildConfig.FINNHUB_API_KEY
     ): FinnhubQuoteDto
+
+    @GET("news")
+    suspend fun getMarketNews(
+        @Query("category") category: String = "general",
+        @Query("token") token: String = BuildConfig.FINNHUB_API_KEY
+    ): List<FinnhubNewsDto>
 }

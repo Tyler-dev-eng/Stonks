@@ -10,14 +10,11 @@ import kotlinx.serialization.Serializable
  * destinations instead of string routes.
  */
 
-/** Route for the searchable list of company listings; also the app's start destination. */
 @Serializable
 data object CompanyListings
 
-/**
- * Route for a single company's detail screen.
- *
- * @property symbol Ticker symbol identifying the company to display (e.g. AAPL).
- */
 @Serializable
 data class CompanyInfo(val symbol: String)
+
+@Serializable
+data object MarketNews

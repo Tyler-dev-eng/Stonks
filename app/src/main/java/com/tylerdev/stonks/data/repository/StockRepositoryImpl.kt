@@ -4,10 +4,12 @@ import com.tylerdev.stonks.data.local.StockDatabase
 import com.tylerdev.stonks.data.mapper.toCompanyInfoDomainModel
 import com.tylerdev.stonks.data.mapper.toCompanyListingDomainModel
 import com.tylerdev.stonks.data.mapper.toCompanyListingEntity
+import com.tylerdev.stonks.data.mapper.toNewsArticleDomainModel
 import com.tylerdev.stonks.data.mapper.toStockQuoteDomainModel
 import com.tylerdev.stonks.data.remote.api.FinnhubApi
 import com.tylerdev.stonks.domain.model.CompanyInfoDomainModel
 import com.tylerdev.stonks.domain.model.CompanyListingDomainModel
+import com.tylerdev.stonks.domain.model.NewsArticleDomainModel
 import com.tylerdev.stonks.domain.model.StockQuoteDomainModel
 import com.tylerdev.stonks.domain.repository.StockRepository
 import com.tylerdev.stonks.util.Resource
@@ -87,6 +89,19 @@ class StockRepositoryImpl @Inject constructor(
         } catch (e: HttpException) {
             e.printStackTrace()
             Resource.Error("Couldn't load quote data")
+        }
+    }
+
+    override suspend fun getMarketNews(): Resource<List<NewsArticleDomainModel>> {
+        return try {
+            val articles = finnhubApi.getMarketNews().mapNotNull { it.toNewsArticleDomainModel() }
+            Resource.Success(articles)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Resource.Error("Couldn't load news")
+        } catch (e: HttpException) {
+            e.printStackTrace()
+            Resource.Error("Couldn't load news")
         }
     }
 
