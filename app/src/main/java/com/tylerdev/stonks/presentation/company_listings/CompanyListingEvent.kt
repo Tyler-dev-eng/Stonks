@@ -16,4 +16,7 @@ sealed class CompanyListingEvent {
      * @property query Updated search text.
      */
     data class OnSearchQueryChange(val query: String) : CompanyListingEvent()
+
+    /** Fired when the error Snackbar is dismissed. */
+    object ErrorDismissed : CompanyListingEvent()
 }

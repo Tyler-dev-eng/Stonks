@@ -16,5 +16,7 @@ data class CompanyListingsState(
     /** True while a pull-to-refresh or background refresh is in progress. */
     val isRefreshing: Boolean = false,
     /** Current search input used to filter listings. */
-    val searchQuery: String = ""
+    val searchQuery: String = "",
+    /** Non-null while a Snackbar error should be displayed; null after it is dismissed. */
+    val errorMessage: String? = null
 )

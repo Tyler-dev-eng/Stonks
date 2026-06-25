@@ -34,6 +34,9 @@ class CompanyListingsViewModel @Inject constructor(
             is CompanyListingEvent.Refresh -> {
                 loadCompanyListings(fetchFromRemote = true)
             }
+            is CompanyListingEvent.ErrorDismissed -> {
+                _state.update { it.copy(errorMessage = null) }
+            }
             is CompanyListingEvent.OnSearchQueryChange -> {
                 _state.update { it.copy(searchQuery = event.query) }
                 searchJob?.cancel()
@@ -58,7 +61,9 @@ class CompanyListingsViewModel @Inject constructor(
                                 _state.update { it.copy(companies = listings) }
                             }
                         }
-                        is Resource.Error -> Unit
+                        is Resource.Error -> {
+                            _state.update { it.copy(errorMessage = result.message ?: "An unexpected error occurred") }
+                        }
                         is Resource.Loading -> {
                             _state.update { it.copy(isLoading = result.isLoading) }
                         }
