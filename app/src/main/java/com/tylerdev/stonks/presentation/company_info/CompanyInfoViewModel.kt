@@ -32,6 +32,7 @@ class CompanyInfoViewModel @Inject constructor(
                         is Resource.Success -> it.copy(
                             company = result.data?.info,
                             quote = result.data?.quote,
+                            isQuoteLoading = result.data?.info != null && result.data.quote == null,
                             error = null,
                             isLoading = false
                         )

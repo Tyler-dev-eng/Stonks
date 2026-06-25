@@ -7,5 +7,6 @@ data class CompanyInfoState(
     val company: CompanyInfoDomainModel? = null,
     val quote: StockQuoteDomainModel? = null,
     val isLoading: Boolean = false,
+    val isQuoteLoading: Boolean = false,
     val error: String? = null
 )
