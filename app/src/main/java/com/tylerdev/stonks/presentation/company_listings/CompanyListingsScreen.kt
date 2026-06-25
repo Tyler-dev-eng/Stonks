@@ -87,6 +87,14 @@ fun CompanyListingsScreen(
                     val company = state.companies[i]
                     CompanyItem(
                         company = company,
+                        onFavoriteClick = {
+                            viewModel.onEvent(
+                                CompanyListingEvent.ToggleFavorite(
+                                    symbol = company.symbol,
+                                    isFavorite = !company.isFavorite
+                                )
+                            )
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { onCompanyClick(company.symbol) }

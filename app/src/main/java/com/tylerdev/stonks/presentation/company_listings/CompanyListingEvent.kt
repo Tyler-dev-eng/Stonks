@@ -19,4 +19,7 @@ sealed class CompanyListingEvent {
 
     /** Fired when the error Snackbar is dismissed. */
     object ErrorDismissed : CompanyListingEvent()
+
+    /** Fired when the user taps the star icon on a listing row. */
+    data class ToggleFavorite(val symbol: String, val isFavorite: Boolean) : CompanyListingEvent()
 }

@@ -8,10 +8,8 @@ package com.tylerdev.stonks.domain.model
  * network DTOs.
  */
 data class CompanyListingDomainModel(
-    /** Display name of the listed company. */
     val name: String,
-    /** Ticker symbol used to identify the security (e.g. AAPL). */
     val symbol: String,
-    /** Exchange on which the company is listed (e.g. NASDAQ). */
-    val exchange: String
+    val exchange: String,
+    val isFavorite: Boolean = false
 )

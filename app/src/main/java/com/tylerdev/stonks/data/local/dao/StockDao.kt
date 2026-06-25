@@ -51,4 +51,13 @@ interface StockDao {
         """
     )
     suspend fun searchCompanyListing(query: String): List<CompanyListingEntity>
+
+    @Query("UPDATE companylistingentity SET isFavorite = :isFavorite WHERE symbol = :symbol")
+    suspend fun toggleFavorite(symbol: String, isFavorite: Boolean)
+
+    @Query("SELECT symbol FROM companylistingentity WHERE isFavorite = 1")
+    suspend fun getFavoritedSymbols(): List<String>
+
+    @Query("UPDATE companylistingentity SET isFavorite = 1 WHERE symbol IN (:symbols)")
+    suspend fun restoreFavorites(symbols: List<String>)
 }

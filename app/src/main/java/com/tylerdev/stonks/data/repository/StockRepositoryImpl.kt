@@ -56,8 +56,12 @@ class StockRepositoryImpl @Inject constructor(
             }
 
             remoteListings?.let { listings ->
+                val favoritedSymbols = dao.getFavoritedSymbols()
                 dao.clearCompanyListings()
                 dao.insertCompanyListings(listings.map { it.toCompanyListingEntity() })
+                if (favoritedSymbols.isNotEmpty()) {
+                    dao.restoreFavorites(favoritedSymbols)
+                }
                 emit(
                     Resource.Success(
                         data = dao.searchCompanyListing("").map { it.toCompanyListingDomainModel() }
@@ -66,6 +70,10 @@ class StockRepositoryImpl @Inject constructor(
                 emit(Resource.Loading(false))
             }
         }
+    }
+
+    override suspend fun toggleFavorite(symbol: String, isFavorite: Boolean) {
+        dao.toggleFavorite(symbol, isFavorite)
     }
 
     override suspend fun getStockQuote(symbol: String): Resource<StockQuoteDomainModel> {

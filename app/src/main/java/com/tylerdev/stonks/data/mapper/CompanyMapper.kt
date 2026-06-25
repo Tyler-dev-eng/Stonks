@@ -17,21 +17,16 @@ fun CompanyListingEntity.toCompanyListingDomainModel() =
     CompanyListingDomainModel(
         name = name,
         symbol = symbol,
-        exchange = exchange
+        exchange = exchange,
+        isFavorite = isFavorite
     )
 
-
-/**
- * Maps a [CompanyListingDomainModel] into a [CompanyListingEntity] for local persistence.
- *
- * @return Entity ready for insertion or update in Room; [CompanyListingEntity.id] is left null
- *   so the database can assign a primary key on insert.
- */
 fun CompanyListingDomainModel.toCompanyListingEntity() =
     CompanyListingEntity(
         name = name,
         symbol = symbol,
-        exchange = exchange
+        exchange = exchange,
+        isFavorite = isFavorite
     )
 
 fun FinnhubSymbolDto.toCompanyListingDomainModel(): CompanyListingDomainModel? {

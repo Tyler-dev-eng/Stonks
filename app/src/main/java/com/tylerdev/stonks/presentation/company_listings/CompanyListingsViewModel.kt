@@ -3,6 +3,7 @@ package com.tylerdev.stonks.presentation.company_listings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tylerdev.stonks.domain.usecase.GetCompanyListingsUseCase
+import com.tylerdev.stonks.domain.usecase.ToggleFavoriteUseCase
 import com.tylerdev.stonks.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -17,7 +18,8 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class CompanyListingsViewModel @Inject constructor(
-    private val getCompanyListings: GetCompanyListingsUseCase
+    private val getCompanyListings: GetCompanyListingsUseCase,
+    private val toggleFavorite: ToggleFavoriteUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CompanyListingsState())
@@ -36,6 +38,19 @@ class CompanyListingsViewModel @Inject constructor(
             }
             is CompanyListingEvent.ErrorDismissed -> {
                 _state.update { it.copy(errorMessage = null) }
+            }
+            is CompanyListingEvent.ToggleFavorite -> {
+                viewModelScope.launch {
+                    toggleFavorite(event.symbol, event.isFavorite)
+                    _state.update { state ->
+                        state.copy(
+                            companies = state.companies.map { company ->
+                                if (company.symbol == event.symbol) company.copy(isFavorite = event.isFavorite)
+                                else company
+                            }
+                        )
+                    }
+                }
             }
             is CompanyListingEvent.OnSearchQueryChange -> {
                 _state.update { it.copy(searchQuery = event.query) }

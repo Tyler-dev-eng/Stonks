@@ -53,6 +53,8 @@ object AppModule {
             context,
             StockDatabase::class.java,
             "stonks.db"
-        ).build()
+        )
+            .addMigrations(StockDatabase.MIGRATION_1_2)
+            .build()
     }
 }

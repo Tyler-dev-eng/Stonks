@@ -13,6 +13,8 @@ interface StockRepository {
         query: String
     ): Flow<Resource<List<CompanyListingDomainModel>>>
 
+    suspend fun toggleFavorite(symbol: String, isFavorite: Boolean)
+
     suspend fun getStockQuote(symbol: String): Resource<StockQuoteDomainModel>
 
     suspend fun getCompanyInfo(symbol: String): Resource<CompanyInfoDomainModel>

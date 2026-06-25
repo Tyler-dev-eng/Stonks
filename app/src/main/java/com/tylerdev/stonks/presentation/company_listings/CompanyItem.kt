@@ -5,7 +5,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,22 +21,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tylerdev.stonks.domain.model.CompanyListingDomainModel
+import com.tylerdev.stonks.presentation.ui.theme.ProfitGreen
 
 @Composable
 fun CompanyItem(
     company: CompanyListingDomainModel,
+    onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Row(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = company.name,
                     fontWeight = FontWeight.SemiBold,
@@ -41,7 +44,7 @@ fun CompanyItem(
                     maxLines = 1,
                     modifier = Modifier.weight(1f)
                 )
-                Spacer(Modifier.width(4.dp))
+                Spacer(Modifier.size(4.dp))
                 Text(
                     text = company.exchange,
                     fontWeight = FontWeight.Light,
@@ -53,6 +56,13 @@ fun CompanyItem(
                 text = "(${company.symbol})",
                 fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
                 color = MaterialTheme.colorScheme.onBackground
+            )
+        }
+        IconButton(onClick = onFavoriteClick) {
+            Icon(
+                imageVector = if (company.isFavorite) Icons.Filled.Star else Icons.Outlined.Star,
+                contentDescription = if (company.isFavorite) "Remove from watchlist" else "Add to watchlist",
+                tint = if (company.isFavorite) ProfitGreen else MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

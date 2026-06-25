@@ -12,12 +12,9 @@ import androidx.room.PrimaryKey
  */
 @Entity
 data class CompanyListingEntity(
-    /** Display name of the listed company. */
     val name: String,
-    /** Ticker symbol used to identify the security (e.g. AAPL). */
     val symbol: String,
-    /** Exchange on which the company is listed (e.g. NASDAQ). */
     val exchange: String,
-    /** Auto-generated primary key; null when inserting a new row. */
+    val isFavorite: Boolean = false,
     @PrimaryKey val id: Int? = null
 )
