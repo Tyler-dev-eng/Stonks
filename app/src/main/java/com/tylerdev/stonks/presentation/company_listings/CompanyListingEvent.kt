@@ -22,4 +22,7 @@ sealed class CompanyListingEvent {
 
     /** Fired when the user taps the star icon on a listing row. */
     data class ToggleFavorite(val symbol: String, val isFavorite: Boolean) : CompanyListingEvent()
+
+    /** Fired when the user switches between All and Favorites tabs. */
+    data class SelectTab(val tab: ListingsTab) : CompanyListingEvent()
 }

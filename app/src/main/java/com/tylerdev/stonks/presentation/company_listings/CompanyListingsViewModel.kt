@@ -39,6 +39,9 @@ class CompanyListingsViewModel @Inject constructor(
             is CompanyListingEvent.ErrorDismissed -> {
                 _state.update { it.copy(errorMessage = null) }
             }
+            is CompanyListingEvent.SelectTab -> {
+                _state.update { it.copy(selectedTab = event.tab) }
+            }
             is CompanyListingEvent.ToggleFavorite -> {
                 viewModelScope.launch {
                     toggleFavorite(event.symbol, event.isFavorite)

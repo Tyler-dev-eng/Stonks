@@ -9,14 +9,13 @@ import com.tylerdev.stonks.domain.model.CompanyListingDomainModel
  * loading indicators, pull-to-refresh state, and the active search query.
  */
 data class CompanyListingsState(
-    /** Company listings currently shown in the list. */
     val companies: List<CompanyListingDomainModel> = emptyList(),
-    /** True while an initial load or search is in progress. */
     val isLoading: Boolean = false,
-    /** True while a pull-to-refresh or background refresh is in progress. */
     val isRefreshing: Boolean = false,
-    /** Current search input used to filter listings. */
     val searchQuery: String = "",
-    /** Non-null while a Snackbar error should be displayed; null after it is dismissed. */
-    val errorMessage: String? = null
-)
+    val errorMessage: String? = null,
+    val selectedTab: ListingsTab = ListingsTab.ALL
+) {
+    val displayedCompanies: List<CompanyListingDomainModel>
+        get() = if (selectedTab == ListingsTab.FAVORITES) companies.filter { it.isFavorite } else companies
+}
