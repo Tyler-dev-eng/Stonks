@@ -23,6 +23,15 @@ class CompanyInfoViewModel @Inject constructor(
     val state: StateFlow<CompanyInfoState> = _state.asStateFlow()
 
     init {
+        load()
+    }
+
+    fun retry() {
+        _state.update { it.copy(error = null) }
+        load()
+    }
+
+    private fun load() {
         viewModelScope.launch {
             val symbol = savedStateHandle.get<String>("symbol") ?: return@launch
             getCompanyDetail(symbol).collect { result ->

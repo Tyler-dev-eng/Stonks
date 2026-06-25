@@ -21,8 +21,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.SearchOff
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,7 +55,10 @@ fun CompanyInfoScreen(
     when {
         state.isLoading -> CompanyInfoSkeleton()
 
-        state.error != null -> CompanyInfoErrorState(symbol = symbol)
+        state.error != null -> CompanyInfoErrorState(
+            symbol = symbol,
+            onRetry = { viewModel.retry() }
+        )
 
         else -> CompanyInfoContent(state)
     }
@@ -247,6 +253,44 @@ private fun shimmerBrush(): Brush {
         start = Offset(offset - 600f, 0f),
         end = Offset(offset, 0f)
     )
+}
+
+@Composable
+private fun CompanyInfoErrorState(symbol: String, onRetry: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.SearchOff,
+                contentDescription = null,
+                modifier = Modifier.size(72.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "No data found",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = "$symbol isn't available in the data provider.\nIt may be delisted or not yet supported.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+            Spacer(Modifier.height(4.dp))
+            Button(onClick = onRetry) {
+                Text("Try again")
+            }
+        }
+    }
 }
 
 @Composable
