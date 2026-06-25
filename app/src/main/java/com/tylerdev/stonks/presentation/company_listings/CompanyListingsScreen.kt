@@ -109,6 +109,7 @@ fun CompanyListingsScreen(
                                     )
                                 )
                             },
+                            quote = state.quotesBySymbol[company.symbol],
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable { onCompanyClick(company.symbol) }

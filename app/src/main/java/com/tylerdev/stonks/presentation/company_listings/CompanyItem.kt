@@ -21,13 +21,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tylerdev.stonks.domain.model.CompanyListingDomainModel
+import com.tylerdev.stonks.domain.model.StockQuoteDomainModel
+import com.tylerdev.stonks.presentation.ui.PriceChangeBadge
 import com.tylerdev.stonks.presentation.ui.theme.ProfitGreen
 
 @Composable
 fun CompanyItem(
     company: CompanyListingDomainModel,
     onFavoriteClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    quote: StockQuoteDomainModel? = null
 ) {
     Row(
         modifier = modifier,
@@ -51,12 +54,24 @@ fun CompanyItem(
                     color = MaterialTheme.colorScheme.onBackground
                 )
             }
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = "(${company.symbol})",
-                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                color = MaterialTheme.colorScheme.onBackground
-            )
+            Spacer(Modifier.height(4.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "(${company.symbol})",
+                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                if (quote != null) {
+                    Spacer(Modifier.weight(1f))
+                    PriceChangeBadge(
+                        current = quote.current,
+                        previousClose = quote.previousClose
+                    )
+                }
+            }
         }
         IconButton(onClick = onFavoriteClick) {
             Icon(

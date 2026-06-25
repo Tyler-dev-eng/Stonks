@@ -40,6 +40,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.tylerdev.stonks.domain.model.StockQuoteDomainModel
+import com.tylerdev.stonks.presentation.ui.PriceChangeBadge
 
 @Composable
 fun CompanyInfoScreen(
@@ -51,17 +52,7 @@ fun CompanyInfoScreen(
     when {
         state.isLoading -> CompanyInfoSkeleton()
 
-        state.error != null -> Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = state.error!!,
-                color = MaterialTheme.colorScheme.error,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
+        state.error != null -> CompanyInfoErrorState(symbol = symbol)
 
         else -> CompanyInfoContent(state)
     }
@@ -124,6 +115,10 @@ private fun CompanyInfoContent(state: CompanyInfoState) {
                     text = "$${String.format("%.2f", quote.current)}",
                     style = MaterialTheme.typography.displaySmall,
                     fontWeight = FontWeight.Bold
+                )
+                PriceChangeBadge(
+                    current = quote.current,
+                    previousClose = quote.previousClose
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 QuoteStatsRow(quote = quote)
