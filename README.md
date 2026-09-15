@@ -4,6 +4,12 @@ A clean, modern Android stock market app built with Jetpack Compose. Browse thou
 
 ---
 
+## Screenshots
+
+| Markets | Watchlist | Detail | News |
+|---|---|---|---|
+| ![Markets](screenshots/markets.png) | ![Watchlist](screenshots/watchlist.png) | ![Detail](screenshots/detail.png) | ![News](screenshots/news.png) |
+
 ## Features
 
 - Browse all US-listed stocks with instant search (debounced, cache-first)
